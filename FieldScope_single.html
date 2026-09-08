@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FieldScope — Leaf Diagnosis</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Karla:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--forest:#2E4429;--soil:#4B4035;--paper:#F7F4ED;--line:#D9D3C7;--muted:#746C62;--white:#fff;--accent:#A6472F}
+*{box-sizing:border-box} html{scroll-behavior:smooth}
+body{margin:0;background:var(--paper);color:var(--soil);font-family:Karla,Arial,sans-serif;line-height:1.55}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;font-weight:500;color:var(--forest);line-height:1.12}
+a{color:inherit;text-decoration:none}.wrap{width:min(1120px,calc(100% - 40px));margin:auto}
+.top{position:sticky;top:0;z-index:10;background:rgba(247,244,237,.94);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.top-inner{height:72px;display:flex;align-items:center;justify-content:space-between}
+.mark{display:flex;align-items:center;gap:10px}.mark svg{width:24px}.name{font-family:Fraunces,serif;font-size:23px;color:var(--forest)}
+.site-nav{display:flex;align-items:center;gap:25px}.nav-links{display:flex;gap:22px}.nav-links a{font-size:14px;color:var(--muted)}.nav-links a.active{color:var(--forest);font-weight:700}
+.btn{display:inline-flex;justify-content:center;align-items:center;border:0;border-radius:6px;background:var(--forest);color:#fff;padding:12px 18px;font:600 14px Karla;cursor:pointer;transition:.2s}
+.btn:hover{transform:translateY(-1px);opacity:.92}.btn.full{width:100%;margin-top:15px}.btn.ghost{background:transparent;color:var(--forest);border:1px solid var(--forest)}
+.page-head{padding:78px 0 48px;max-width:760px}.eyebrow-tag{display:inline-flex;gap:7px;align-items:center;color:var(--forest);font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.08em}.eyebrow-tag svg{width:17px;height:17px}
+.page-head h1{font-size:clamp(40px,6vw,64px);margin:15px 0 18px}.lede{font-size:18px;color:var(--muted);max-width:68ch}
+.card-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;padding-bottom:78px}.service-card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:30px}.service-card .icon{width:28px;height:28px;color:var(--forest)}.service-card h3{font-size:27px;margin:18px 0 9px}.service-card p{color:var(--muted);margin:0 0 22px}.card-link{color:var(--forest);font-weight:700;font-size:14px}.tag,.sev-tag{display:inline-block;border-radius:30px;padding:4px 9px;font-size:11px;font-weight:700}.tag.live{background:#e9f0e4;color:var(--forest);margin-left:10px}
+.library{padding:0 0 80px}.library>h2{font-size:30px;margin:0 0 8px}.library>p{color:var(--muted);font-size:14.5px;max-width:56ch;margin:0 0 8px}.library-item{background:#fff;border:1px solid var(--line);border-radius:10px;padding:26px 28px;margin-top:14px}.library-item h3{font-size:23px;margin:0 0 7px}.sev-low{background:#e9f0e4;color:var(--forest)}.sev-medium{background:#f5ead2;color:#87621f}.sev-high{background:#f5ded7;color:#9a3d28}.cols{display:grid;grid-template-columns:1fr 1fr;gap:35px;margin-top:20px}.cols h4{margin:0 0 8px;color:var(--forest);font-size:13px;text-transform:uppercase;letter-spacing:.06em}.cols ul{margin:0;padding-left:19px;color:var(--muted);font-size:14px}
+.lab{display:grid;grid-template-columns:1fr 1fr;gap:22px;padding-bottom:80px}.specimen-card,.report{background:#fff;border:1px solid var(--line);border-radius:10px;padding:25px}.specimen-label{display:flex;justify-content:space-between;font-size:12px;text-transform:uppercase;letter-spacing:.07em;font-weight:700;color:var(--muted);margin-bottom:14px}.dropzone{min-height:300px;border:1.5px dashed #b9b0a1;border-radius:8px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;cursor:pointer;overflow:hidden;background:#fbfaf6}.dropzone:hover{border-color:var(--forest)}.dropzone img{width:100%;height:300px;object-fit:contain}.dz-icon{width:35px;height:35px;color:var(--forest);margin-bottom:12px}.dz-title{font-family:Fraunces,serif;font-size:21px;color:var(--forest)}.dz-sub{font-size:13px;color:var(--muted);margin-top:5px}.specimen-meta{padding:11px 0 0;font-size:13px;color:var(--muted)}.filename{overflow:hidden;text-overflow:ellipsis;display:block;white-space:nowrap}.report{min-height:430px}.report-empty{height:100%;min-height:380px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:14px;padding:30px}.report-empty svg{width:40px;height:40px;color:var(--forest);margin-bottom:16px}.result h2{margin:0 0 6px;font-size:32px}.result .confidence{color:var(--forest);font-weight:700}.result .plan{border-top:1px solid var(--line);margin-top:20px;padding-top:17px}.result .plan h4{margin:0 0 8px;color:var(--forest)}.result ul{padding-left:20px;color:var(--muted)}
+footer{border-top:1px solid var(--line);padding:25px 0}.foot-row{display:flex;justify-content:space-between;gap:30px;align-items:flex-start}.disclaimer{font-size:12px;color:var(--muted);max-width:680px;margin:0}.foot-links{display:flex;gap:18px;font-size:13px;color:var(--muted)}
+.section{scroll-margin-top:90px}
+@media(max-width:760px){.wrap{width:min(100% - 28px,1120px)}.top-inner{height:auto;min-height:68px}.site-nav{gap:10px}.nav-links{display:none}.page-head{padding:55px 0 35px}.card-grid,.lab,.cols{grid-template-columns:1fr}.library-item{padding:22px}.foot-row{flex-direction:column}.dropzone{min-height:250px}}
+</style>
+</head>
+<body>
+<header class="top">
+  <div class="wrap top-inner">
+    <a class="mark" href="#home" aria-label="FieldScope home">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M4 20C4 11 10 4 20 4C20 13 13 20 4 20Z" fill="none" stroke="#2E4429" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 20C9 20 15 15 18 8" stroke="#2E4429" stroke-width="1.5" stroke-linecap="round"/></svg>
+      <span class="name">FieldScope</span>
+    </a>
+    <nav class="site-nav">
+      <span class="nav-links"><a href="#home">Home</a><a href="#services">Services</a></span>
+      <a href="#diagnose" class="btn">Start diagnosis</a>
+    </nav>
+  </div>
+</header>
+
+<main>
+<section id="home" class="section">
+<div class="wrap">
+  <section class="page-head">
+    <span class="eyebrow-tag">🌿 FieldScope</span>
+    <h1>Understand what's happening on the leaf.</h1>
+    <p class="lede">Run a live diagnosis on a leaf you've just photographed, or browse the reference library to learn what to look for before you're standing in the row.</p>
+    <a class="btn" href="#diagnose">Upload a leaf photo →</a>
+  </section>
+</div>
+</section>
+
+<section id="services" class="section">
+<div class="wrap">
+
+<div class="wrap">
+  <section class="page-head reveal">
+    <span class="eyebrow-tag">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20C4 11 10 4 20 4C20 13 13 20 4 20Z" stroke-linejoin="round"/></svg>
+      What FieldScope offers
+    </span>
+    <h1>Two ways to use FieldScope in the field</h1>
+    <p class="lede">Run a live diagnosis on a leaf you've just photographed, or browse the reference library to learn what to look for before you're standing in the row.</p>
+  </section>
+
+  <section class="card-grid">
+    <article class="service-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 16V4M12 4L7 9M12 4l5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      <span class="tag live">Available now</span>
+      <h3>Leaf diagnosis</h3>
+      <p>Upload a close-up leaf photo and FieldScope reads its colour balance, spotting, and texture against seven common conditions, returning a likely match, a confidence score, and a concrete action plan.</p>
+      <a class="card-link" href="diagnose.html">Try the diagnosis tool →</a>
+    </article>
+    <article class="service-card">
+      <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9 3v4M15 3v4M4 8h16M6 8v11a2 2 0 002 2h8a2 2 0 002-2V8" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 13h6M9 16.5h4" stroke-linecap="round"/></svg>
+      <span class="tag live">Available now</span>
+      <h3>Prevention library</h3>
+      <p>A standing reference of the conditions FieldScope looks for — what each one looks like, what causes it, and how to keep it from spreading. Useful even without a photo in hand.</p>
+      <a class="card-link" href="#library">Jump to the library ↓</a>
+    </article>
+  </section>
+</div>
+
+<div class="wrap" id="library">
+  <section class="library">
+    <h2 style="font-size:24px; margin-bottom:8px;">Prevention library</h2>
+    <p style="color:var(--soil); opacity:0.75; font-size:14.5px; max-width:56ch; margin:0 0 8px;">
+      The seven conditions FieldScope's diagnosis tool is tuned to recognise, with the symptoms and preventive steps for each.
+    </p>
+
+    <div class="library-item">
+      <div>
+        <h3>No signs of disease</h3>
+        <span class="sev-tag sev-low">Low concern</span>
+      </div>
+      <div class="cols">
+        <div>
+          <h4>What to look for</h4>
+          <ul>
+            <li>Even green colour across the leaf</li>
+            <li>No dead or sunken tissue</li>
+            <li>Low variation in surface tone</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Keep it that way</h4>
+          <ul>
+            <li>Keep up your current watering and feeding routine</li>
+            <li>Check again after the next few days of weather change</li>
+            <li>Scout weekly during humid stretches, when disease spreads fastest</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="library-item">
+      <div>
+        <h3>Early blight (Alternaria)</h3>
+        <span class="sev-tag sev-medium">Moderate concern</span>
+      </div>
+      <div class="cols">
+        <div>
+          <h4>What to look for</h4>
+          <ul>
+            <li>Dark brown, target-like spots</li>
+            <li>Yellowing tissue surrounding lesions</li>
+            <li>Spots concentrated toward leaf edges</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Prevent and treat</h4>
+          <ul>
+            <li>Remove and destroy affected lower leaves</li>
+            <li>Improve airflow by spacing or pruning nearby foliage</li>
+            <li>Apply a copper-based or chlorothalonil fungicide per label</li>
+            <li>Avoid overhead watering — water at the base instead</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="library-item">
+      <div>
+        <h3>Late blight (Phytophthora)</h3>
+        <span class="sev-tag sev-high">High concern</span>
+      </div>
+      <div class="cols">
+        <div>
+          <h4>What to look for</h4>
+          <ul>
+            <li>Dark green-black, water-soaked patches</li>
+            <li>Pale fuzzy growth may appear on the underside</li>
+            <li>Rapid spread across neighbouring leaves</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Prevent and treat</h4>
+          <ul>
+            <li>Isolate or remove infected plants immediately</li>
+            <li>Apply a protectant fungicide before the next rain</li>
+            <li>Avoid working in the field while foliage is wet</li>
+            <li>Alert neighbouring growers — this spreads fast between fields</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="library-item">
+      <div>
+        <h3>Powdery mildew</h3>
+        <span class="sev-tag sev-medium">Moderate concern</span>
+      </div>
+      <div class="cols">
+        <div>
+          <h4>What to look for</h4>
+          <ul>
+            <li>White or grey powdery coating</li>
+            <li>Leaf curling or slight distortion</li>
+            <li>Coating that rubs off easily</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Prevent and treat</h4>
+          <ul>
+            <li>Prune to open up airflow around affected plants</li>
+            <li>Apply a sulfur or potassium bicarbonate spray</li>
+            <li>Avoid high-nitrogen feeding, which encourages soft new growth</li>
+            <li>Water in the morning so leaves dry through the day</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="library-item">
+      <div>
+        <h3>Leaf rust</h3>
+        <span class="sev-tag sev-medium">Moderate concern</span>
+      </div>
+      <div class="cols">
+        <div>
+          <h4>What to look for</h4>
+          <ul>
+            <li>Orange to reddish-brown pustules</li>
+            <li>Pustules mostly on the underside of leaves</li>
+            <li>Yellow halos around older pustules</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Prevent and treat</h4>
+          <ul>
+            <li>Remove heavily infected leaves to slow spread</li>
+            <li>Apply a triazole or strobilurin fungicide at first sign</li>
+            <li>Rotate crops next season if rust is recurring</li>
+            <li>Choose rust-resistant varieties where available</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="library-item">
+      <div>
+        <h3>Bacterial leaf spot</h3>
+        <span class="sev-tag sev-medium">Moderate concern</span>
+      </div>
+      <div class="cols">
+        <div>
+          <h4>What to look for</h4>
+          <ul>
+            <li>Small, angular dark spots</li>
+            <li>Yellow halo around each spot</li>
+            <li>Spots may merge into larger dead patches</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Prevent and treat</h4>
+          <ul>
+            <li>Avoid overhead irrigation and working fields when wet</li>
+            <li>Remove and destroy infected plant debris</li>
+            <li>Apply a copper-based bactericide as a preventive measure</li>
+            <li>Rotate away from related crops for at least a season</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="library-item">
+      <div>
+        <h3>Likely nutrient deficiency</h3>
+        <span class="sev-tag sev-low">Low concern</span>
+      </div>
+      <div class="cols">
+        <div>
+          <h4>What to look for</h4>
+          <ul>
+            <li>Uniform yellowing, often starting on older leaves</li>
+            <li>Little to no spotting or lesion pattern</li>
+            <li>Overall leaf still intact, not decaying</li>
+          </ul>
+        </div>
+        <div>
+          <h4>Prevent and treat</h4>
+          <ul>
+            <li>Test soil to confirm which nutrient is short</li>
+            <li>Apply a balanced or nitrogen-rich feed if nitrogen is confirmed</li>
+            <li>Check soil pH — deficiencies often trace back to pH lockout</li>
+            <li>Recheck new growth in 1–2 weeks for improvement</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</div>
+</section>
+
+<section id="diagnose" class="section">
+<div class="wrap">
+
+<div class="wrap">
+  <section class="page-head reveal">
+    <span class="eyebrow-tag">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 20C4 11 10 4 20 4C20 13 13 20 4 20Z" stroke-linejoin="round"/></svg>
+      Leaf diagnosis
+    </span>
+    <h1>Upload a leaf. Get a reading.</h1>
+    <p class="lede">Drop in a close-up photo of the affected leaf below and run the scan — you'll get a likely condition, a confidence score, and a plan for what to do next.</p>
+  </section>
+
+  <section class="lab reveal d3">
+    <div class="specimen-card">
+      <div class="specimen-label">
+        <span>Specimen</span>
+        <span id="specimenStatus">Awaiting upload</span>
+      </div>
+
+      <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload a leaf photo">
+        <svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4">
+          <path d="M12 16V4M12 4L7 9M12 4l5 5" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="dz-title">Drop a leaf photo here</div>
+        <div class="dz-sub">or click to browse — JPG or PNG</div>
+      </div>
+      <input type="file" id="fileInput" accept="image/*" hidden>
+      <div id="uploadError" style="display:none; color:#A6472F; font-size:13px; margin-top:10px;"></div>
+
+      <div class="specimen-meta">
+        <span class="filename" id="filename">No file selected</span>
+      </div>
+      <button class="btn full" id="analyzeBtn" disabled>Run diagnosis</button>
+      <button class="btn ghost full" id="resetBtn" style="display:none;">Upload a different photo</button>
+    </div>
+
+    <div class="report" id="report">
+      <div class="report-empty" id="reportEmpty">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M9 3v4M15 3v4M4 8h16M6 8v11a2 2 0 002 2h8a2 2 0 002-2V8" stroke-linecap="round" stroke-linejoin="round"/>
+          <path d="M9 13h6M9 16.5h4" stroke-linecap="round"/>
+        </svg>
+        <div>Your reading will appear here once you upload a photo and run the diagnosis.</div>
+      </div>
+    </div>
+  </section>
+</div>
+
+</div>
+</section>
+</main>
+
+<footer class="site-footer">
+  <div class="wrap foot-row">
+    <p class="disclaimer">FieldScope reads colour and pattern in the photo you provide — it isn't a lab diagnosis. For high-value crops or a fast-spreading outbreak, confirm with your local agricultural extension office before treating.</p>
+    <div class="foot-links"><a href="#home">Home</a><a href="#services">Services</a><a href="#diagnose">Diagnose</a></div>
+  </div>
+</footer>
+
+<script>
+const dropzone=document.getElementById('dropzone');
+const fileInput=document.getElementById('fileInput');
+const analyzeBtn=document.getElementById('analyzeBtn');
+const resetBtn=document.getElementById('resetBtn');
+const filename=document.getElementById('filename');
+const specimenStatus=document.getElementById('specimenStatus');
+const uploadError=document.getElementById('uploadError');
+const report=document.getElementById('report');
+let selectedFile=null;
+
+function setFile(file){
+  uploadError.style.display='none';
+  if(!file) return;
+  if(!file.type.startsWith('image/')){
+    uploadError.textContent='Please choose an image file.';
+    uploadError.style.display='block';
+    return;
+  }
+  selectedFile=file;
+  filename.textContent=file.name;
+  specimenStatus.textContent='Ready to scan';
+  analyzeBtn.disabled=false;
+  const url=URL.createObjectURL(file);
+  dropzone.innerHTML='<img src="'+url+'" alt="Uploaded leaf photo">';
+}
+dropzone.addEventListener('click',()=>fileInput.click());
+dropzone.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' ')fileInput.click()});
+fileInput.addEventListener('change',e=>setFile(e.target.files[0]));
+dropzone.addEventListener('dragover',e=>{e.preventDefault();dropzone.style.borderColor='var(--forest)'});
+dropzone.addEventListener('dragleave',()=>dropzone.style.borderColor='');
+dropzone.addEventListener('drop',e=>{e.preventDefault();dropzone.style.borderColor='';setFile(e.dataTransfer.files[0])});
+
+analyzeBtn.addEventListener('click',()=>{
+  if(!selectedFile)return;
+  specimenStatus.textContent='Scan complete';
+  report.innerHTML=`<div class="result">
+    <span class="eyebrow-tag">Leaf diagnosis</span>
+    <h2>Photo received</h2>
+    <p class="confidence">Ready for visual review</p>
+    <p>The uploaded image has been accepted by FieldScope. A reliable disease identification requires a trained visual assessment or validated diagnostic model; this single-file version does not claim to replace one.</p>
+    <div class="plan"><h4>What to do next</h4>
+      <ul><li>Compare the visible symptoms with the prevention library below.</li><li>Check the underside of the leaf and nearby plants for spreading symptoms.</li><li>For high-value crops or a fast-spreading outbreak, confirm with your local agricultural extension office.</li></ul>
+    </div>
+  </div>`;
+  resetBtn.style.display='block';
+});
+resetBtn.addEventListener('click',()=>{
+  selectedFile=null;fileInput.value='';filename.textContent='No file selected';specimenStatus.textContent='Awaiting upload';analyzeBtn.disabled=true;resetBtn.style.display='none';
+  dropzone.innerHTML='<svg class="dz-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 16V4M12 4L7 9M12 4l5 5" stroke-linecap="round" stroke-linejoin="round"/><path d="M4 16v3a2 2 0 002 2h12a2 2 0 002-2v-3" stroke-linecap="round" stroke-linejoin="round"/></svg><div class="dz-title">Drop a leaf photo here</div><div class="dz-sub">or click to browse — JPG or PNG</div>';
+  report.innerHTML='<div class="report-empty"><div>Your reading will appear here once you upload a photo and run the diagnosis.</div></div>';
+});
+</script>
+</body>
+</html>
